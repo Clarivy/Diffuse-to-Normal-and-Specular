@@ -1,0 +1,41 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: test",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--gpu_ids", "0",
+                "--no_instance",
+                "--dataroot", "/data/new_disk/pangbai/d2sn_data/test",
+                "--label_nc", "0",
+                "--name", "d2sn",
+                "--fp16",
+            ]
+        },
+        {
+            "name": "Python: train",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--gpu_ids", "0",
+                "--no_instance",
+                "--dataroot", "/data/new_disk/pangbai/d2sn_data/train",
+                "--label_nc", "0",
+                "--name", "d2sn",
+                "--fp16",
+                "--tf_log"
+            ]
+        }
+    ]
+}
