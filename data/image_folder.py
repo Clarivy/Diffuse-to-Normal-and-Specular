@@ -17,16 +17,23 @@ IMG_EXTENSIONS = [
 def is_image_file(filename):
     return any(filename.endswith(extension) for extension in IMG_EXTENSIONS)
 
+def is_required_file(fname, mode):
+    return  (mode == "input" and fname == "UV_diffuse_merged.png") or \
+            (mode == "label" and fname == "UV_specular_merged.png")
 
-def make_dataset(dir):
+
+def make_dataset(dir, mode):
     images = []
     assert os.path.isdir(dir), '%s is not a valid directory' % dir
 
     for root, _, fnames in sorted(os.walk(dir)):
         for fname in fnames:
-            if is_image_file(fname):
-                path = os.path.join(root, fname)
-                images.append(path)
+            if is_image_file(fname) and is_required_file(fname, mode):
+                    if mode == 'label':
+                        images.append(root)
+                    elif mode == 'input': 
+                        path = os.path.join(root, fname)
+                        images.append(path)
 
     return images
 
