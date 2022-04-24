@@ -6,7 +6,9 @@ from torch.autograd import Variable
 from collections import OrderedDict
 from subprocess import call
 import fractions
-def lcm(a,b): return abs(a * b)/fractions.gcd(a,b) if a and b else 0
+import math
+
+def lcm(a,b): return abs(a * b)/math.gcd(a,b) if a and b else 0
 
 from options.train_options import TrainOptions
 from data.data_loader import CreateDataLoader
@@ -25,7 +27,7 @@ if opt.continue_train:
 else:    
     start_epoch, epoch_iter = 1, 0
 
-opt.print_freq = lcm(opt.print_freq, opt.batchSize)    
+opt.print_freq = lcm(opt.print_freq, opt.batchSize)
 if opt.debug:
     opt.display_freq = 1
     opt.print_freq = 1
