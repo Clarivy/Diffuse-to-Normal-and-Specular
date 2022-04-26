@@ -57,10 +57,10 @@ def readImage(image, debug = False, gamma = 1.0, dtype = np.uint16):
 
     elif dtype == np.uint8:
         if img.dtype == np.uint16:
-            img = (img.astype(np.float64) / 256).astype(np.uint16)
+            img = (img.astype(np.float64) / 256).astype(np.uint8)
         elif img.dtype == np.float16 or img.dtype == np.float32 or img.dtype == np.float64:
-            img = (img * 65535).astype(np.uint16)
-        elif img.dtype != np.uint16:
+            img = (img * 255).astype(np.uint8)
+        elif img.dtype != np.uint8:
             raise Exception("Read Image: unknown type")
         
         if debug:
