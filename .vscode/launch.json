@@ -28,12 +28,11 @@
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
-                "--gpu_ids", "0",
+                "--gpu_ids", "1",
                 "--no_instance",
                 "--dataroot", "/data/new_disk/pangbai/d2sn_data/train",
                 "--label_nc", "0",
                 "--name", "d2sn",
-                "--fp16",
                 "--tf_log"
             ]
         }
