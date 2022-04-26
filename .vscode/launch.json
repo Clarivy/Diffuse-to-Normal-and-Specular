@@ -32,8 +32,11 @@
                 "--no_instance",
                 "--dataroot", "/data/new_disk/pangbai/d2sn_data/train",
                 "--label_nc", "0",
-                "--name", "d2sn",
-                "--tf_log"
+                "--name", "agu_flip_crop_corrected",
+                "--tf_log",
+                "--random_flip",
+                "--random_padding_crop",
+                "--random_resized_crop"
             ]
         }
     ]

@@ -11,6 +11,11 @@ class TrainOptions(BaseOptions):
         self.parser.add_argument('--no_html', action='store_true', help='do not save intermediate training results to [opt.checkpoints_dir]/[opt.name]/web/')
         self.parser.add_argument('--debug', action='store_true', help='only do one epoch and displays at each iteration')
 
+        # data argumentation
+        self.parser.add_argument('--random_flip', action='store_true', help='random flip')
+        self.parser.add_argument('--random_resized_crop', action='store_true', help='random crop with resize')
+        self.parser.add_argument('--random_padding_crop', action='store_true', help='random crop with padding')
+
         # for training
         self.parser.add_argument('--continue_train', action='store_true', help='continue training: load the latest model')
         self.parser.add_argument('--load_pretrain', type=str, default='', help='load the pretrained model from the specified location')

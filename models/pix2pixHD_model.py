@@ -18,8 +18,8 @@ class Pix2PixHDModel(BaseModel):
     
     def initialize(self, opt):
         BaseModel.initialize(self, opt)
-        if opt.resize_or_crop != 'none' or not opt.isTrain: # when training at full res this causes OOM
-            torch.backends.cudnn.benchmark = True
+        torch.backends.cudnn.benchmark = False
+        torch.backends.cudnn.deterministic = True
         self.isTrain = opt.isTrain
         self.use_features = opt.instance_feat or opt.label_feat
         self.gen_features = self.use_features and not self.opt.load_features
