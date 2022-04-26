@@ -43,11 +43,11 @@ class AlignedDataset(BaseDataset):
     def __getitem__(self, index):        
         ### input A (label maps)
         A_path = self.A_paths[index]              
-        A = readImage(A_path, dtype=np.float32)
-        params = get_params(self.opt, A.shape)
+        A = Image.open(A_path)
+        params = get_params(self.opt, A.size)
         if self.opt.label_nc == 0:
             transform_A = get_transform(self.opt, params)
-            A_tensor = transform_A(A)
+            A_tensor = transform_A(A.convert('RGB'))
         else:
             exit(1)
             transform_A = get_transform(self.opt, params, normalize=False) # Attention: NEARST
@@ -58,20 +58,21 @@ class AlignedDataset(BaseDataset):
         if self.opt.isTrain or self.opt.use_encoded_image:
             B_path = self.B_paths[index]   
             path1 = os.path.join(B_path, "UV_specular_merged.png")
-            B1 = readImage(path1, dtype=np.float32)
+            B1 = readImage(path1, dtype=np.uint8)
 
             path2 = os.path.join(B_path, "tangent.png")
             if exists(path2):
-                B2 = readImage(path2, dtype=np.float32)
+                B2 = readImage(path2, dtype=np.uint8)
             else:
                 path2 = os.path.join(B_path, "total_matrix_tangent.png")
                 if exists(path2):
-                    B2 = readImage(path2, dtype=np.float32)
+                    B2 = readImage(path2, dtype=np.uint8)
                 else:
                     print("No tangent image found!")
                     exit(1)
                 
             B = cv2.merge([B1, B2[:,:,1:3]])
+            B = Image.fromarray(B)
             transform_B = get_transform(self.opt, params)      
             B_tensor = transform_B(B)
 
