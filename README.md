@@ -6,6 +6,10 @@
 
 - [x]  Dataloader rollback
 
-- [ ]  Data agumentation
+- [x]  Simple data agumentation
 
-- [ ]  Divide testing and training data
+- [x]  Divide testing and training data
+
+- [ ]  Normalize and denormalize
+
+- [ ]  Skin tone adjust
