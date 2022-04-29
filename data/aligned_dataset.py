@@ -67,9 +67,10 @@ class AlignedDataset(BaseDataset):
             B = cv2.merge([B1, B2[:,:,1:3]])
             # transform_B = get_transform(self.opt, params)      
 
-        transform = get_transform(self.opt, params)
-        A_tensor = transform(A)
-        B_tensor = transform(B)
+        transform_A = get_transform(self.opt, params, mode = "input")
+        A_tensor = transform_A(A)
+        transform_B = get_transform(self.opt, params, mode = "label")
+        B_tensor = transform_B(B)
         ### if using instance maps        
         if not self.opt.no_instance:
             print("Error: not support instance yet")

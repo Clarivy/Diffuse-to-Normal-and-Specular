@@ -25,12 +25,7 @@ def get_params(opt):
     else:
         res['vflip'] = False
 
-    if opt.random_flip and (random.random() > 0.5):
-        res['hflip'] = True
-    else:
-        res['hflip'] = False
-
-    if opt.random_resized_crop and (np.random.random() > 0.5):
+    if opt.random_resized_crop and (np.random.random() > 0.8):
         lx = opt.fineSize + random.randint(0, np.maximum(0, new_w - opt.fineSize))
         ly = opt.fineSize + random.randint(0, np.maximum(0, new_h - opt.fineSize))
         sx = random.randint(0, np.maximum(0, new_w - lx))
@@ -39,7 +34,7 @@ def get_params(opt):
     else:
         res['resized_crop'] = False
     
-    if opt.random_padding_crop and (np.random.random() > 0.5):
+    if opt.random_padding_crop and (np.random.random() > 0.8):
         lx = opt.fineSize + random.randint(0, np.maximum(0, new_w - opt.fineSize))
         ly = opt.fineSize + random.randint(0, np.maximum(0, new_h - opt.fineSize))
         sx = random.randint(0, np.maximum(0, new_w - lx))
@@ -54,16 +49,21 @@ def get_params(opt):
     else:
         res['padding_crop'] = False
     
+    if opt.random_illuminant_adjust and (np.random.random() > 0.5):
+        res['illuminant_adjust'] = np.random.uniform(1 - 0.03, 1 + 0.03)
+    else:
+        res['illuminant_adjust'] = False
+    
     return res
 
-def get_transform(opt, params, method=transforms.InterpolationMode.BICUBIC, normalize=True):
+def get_transform(opt, params, mode, method=transforms.InterpolationMode.BICUBIC, normalize=True):
     transform_list = [transforms.Lambda(lambda img: cv2.resize(img, params['osize'], interpolation=cv2.INTER_CUBIC))]
 
     if params['vflip']:
-        transform_list.append(transforms.Lambda(lambda img: cv2.flip(img, 0)))
-
-    if params['hflip']:
-        transform_list.append(transforms.Lambda(lambda img: cv2.flip(img, 1)))
+        if mode == 'input':
+            transform_list.append(transforms.Lambda(lambda img: __flip(img)))
+        elif mode == 'label':
+            transform_list.append(transforms.Lambda(lambda img: __labelflip(img)))
 
     if params['resized_crop']:
         transform_list.append(transforms.Lambda(lambda img: __resized_crop(img, opt, params)))
@@ -76,10 +76,22 @@ def get_transform(opt, params, method=transforms.InterpolationMode.BICUBIC, norm
     if normalize:
         transform_list += [transforms.Normalize((0.5, 0.5, 0.5),
                                                 (0.5, 0.5, 0.5))]
+
+    if params['illuminant_adjust']:
+        transform_list.append(transforms.Lambda(lambda img: params['illuminant_adjust'] * img))
+    
     return transforms.Compose(transform_list)
 
 def normalize():    
     return transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+
+def __flip(img):
+    return cv2.flip(img, 1)
+
+def __labelflip(img):
+    img = cv2.flip(img, 1)
+    img[:,:,1] = 1 - img[:,:,1]
+    return img
 
 def __resized_crop(img, opt, params):
     x1, y1, x2, y2 = params['resized_crop']
