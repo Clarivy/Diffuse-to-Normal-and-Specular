@@ -7,12 +7,14 @@
 import torch.utils.data as data
 from PIL import Image
 import os
+import numpy as np
+import cv2
+from utils import readImage
 
 IMG_EXTENSIONS = [
     '.jpg', '.JPG', '.jpeg', '.JPEG',
     '.png', '.PNG', '.ppm', '.PPM', '.bmp', '.BMP', '.tiff'
 ]
-
 
 def is_image_file(filename):
     return any(filename.endswith(extension) for extension in IMG_EXTENSIONS)
@@ -20,6 +22,21 @@ def is_image_file(filename):
 def is_required_file(fname, mode):
     return  (mode == "input" and fname == "UV_diffuse_merged.png") or \
             (mode == "label" and fname == "UV_specular_merged.png")
+
+
+def make_face_color(dir, opt):
+    images = []
+    assert os.path.isdir(dir), '%s is not a valid directory' % dir
+
+    for root, _, fnames in sorted(os.walk(dir)):
+        for fname in fnames:
+            if is_image_file(fname):
+                path = os.path.join(root, fname)
+                image = readImage(path, dtype=np.uint8)
+                image = cv2.resize(image, [1024, 1024], interpolation=cv2.INTER_CUBIC)
+                images.append(image)
+
+    return images
 
 
 def make_dataset(dir, mode):

@@ -1,6 +1,6 @@
 import os.path
 from data.base_dataset import BaseDataset, get_params, get_transform, normalize
-from data.image_folder import make_dataset
+from data.image_folder import make_dataset, make_face_color
 from PIL import Image
 import numpy as np
 from os.path import exists
@@ -22,6 +22,9 @@ class AlignedDataset(BaseDataset):
         if opt.isTrain or opt.use_encoded_image:
             self.dir_B = opt.dataroot
             self.B_paths = sorted(make_dataset(self.dir_B, mode = "label"))
+        
+        if opt.isTrain and opt.face_color_transfer:
+            self.opt.face_color = make_face_color(opt.face_color_path, opt)
 
         ### instance maps
         if not opt.no_instance:
