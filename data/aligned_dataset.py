@@ -45,6 +45,8 @@ class AlignedDataset(BaseDataset):
         A_path = self.A_paths[index]              
         A = readImage(A_path, dtype=np.float32)
         params = get_params(self.opt)
+        transform_A = get_transform(self.opt, params, mode = "input")
+        A_tensor = transform_A(A)
 
         B_tensor = inst_tensor = feat_tensor = 0
         ### input B (real images)
@@ -64,13 +66,11 @@ class AlignedDataset(BaseDataset):
                     print("No tangent image found!")
                     exit(1)
                 
-            B = cv2.merge([B1, B2[:,:,1:3]])
+            B = cv2.merge([B1, B2[:,:,0:2]])
+            transform_B = get_transform(self.opt, params, mode = "label")
+            B_tensor = transform_B(B)
             # transform_B = get_transform(self.opt, params)      
 
-        transform_A = get_transform(self.opt, params, mode = "input")
-        A_tensor = transform_A(A)
-        transform_B = get_transform(self.opt, params, mode = "label")
-        B_tensor = transform_B(B)
         ### if using instance maps        
         if not self.opt.no_instance:
             print("Error: not support instance yet")

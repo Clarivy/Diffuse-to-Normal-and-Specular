@@ -20,12 +20,12 @@ def get_params(opt):
 
     res = {}
     res['osize'] = (new_h, new_w)
-    if opt.random_flip and (random.random() > 0.5):
+    if opt.isTrain and opt.random_flip and (random.random() > 0.5):
         res['vflip'] = True
     else:
         res['vflip'] = False
 
-    if opt.random_resized_crop and (np.random.random() > 0.8):
+    if opt.isTrain and opt.random_resized_crop and (np.random.random() > 0.8):
         lx = opt.fineSize + random.randint(0, np.maximum(0, new_w - opt.fineSize))
         ly = opt.fineSize + random.randint(0, np.maximum(0, new_h - opt.fineSize))
         sx = random.randint(0, np.maximum(0, new_w - lx))
@@ -34,7 +34,7 @@ def get_params(opt):
     else:
         res['resized_crop'] = False
     
-    if opt.random_padding_crop and (np.random.random() > 0.8):
+    if opt.isTrain and opt.random_padding_crop and (np.random.random() > 0.8):
         lx = opt.fineSize + random.randint(0, np.maximum(0, new_w - opt.fineSize))
         ly = opt.fineSize + random.randint(0, np.maximum(0, new_h - opt.fineSize))
         sx = random.randint(0, np.maximum(0, new_w - lx))
@@ -49,7 +49,7 @@ def get_params(opt):
     else:
         res['padding_crop'] = False
     
-    if opt.random_illuminant_adjust and (np.random.random() > 0.5):
+    if opt.isTrain and opt.random_illuminant_adjust and (np.random.random() > 0.5):
         res['illuminant_adjust'] = np.random.uniform(1 - 0.03, 1 + 0.03)
     else:
         res['illuminant_adjust'] = False
