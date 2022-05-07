@@ -12,4 +12,28 @@
 
 - [ ]  Normalize and denormalize
 
-- [ ]  Skin tone adjust
+- [x]  Skin tone adjust
+
+- [ ]  Remove specular
+
+## Requirement
+
+- pillow
+
+- numpy
+
+- scikit-image
+
+- scipy
+
+- opencv-python
+
+- matplotlib
+
+- colour-science
+
+- imageio
+
+- torch
+
+- torchvision
