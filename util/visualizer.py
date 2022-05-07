@@ -115,8 +115,8 @@ class Visualizer():
         txts = []
         links = []
 
-        for label, image_numpy in visuals.items():
-            image_name = '%s_%s.jpg' % (name, label)
+        for id, (label, image_numpy) in enumerate(visuals.items()):
+            image_name = '%d_%s_%s.png' % (id, name, label)
             save_path = os.path.join(image_dir, image_name)
             util.save_image(image_numpy, save_path)
 

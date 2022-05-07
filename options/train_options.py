@@ -15,7 +15,9 @@ class TrainOptions(BaseOptions):
         self.parser.add_argument('--random_flip', action='store_true', help='random flip')
         self.parser.add_argument('--random_resized_crop', action='store_true', help='random crop with resize')
         self.parser.add_argument('--random_padding_crop', action='store_true', help='random crop with padding')
-        self.parser.add_argument('--random_illuminant_adjust', action='store_true', help='random crop with padding')
+        self.parser.add_argument('--random_illuminant_adjust', action='store_true', help='random adjust illuminant')
+        self.parser.add_argument('--face_color_transfer', action='store_true', help='apply face color transfer randomly')
+        self.parser.add_argument('--face_color_path', type=str, default='./data/pic') 
 
         # for training
         self.parser.add_argument('--continue_train', action='store_true', help='continue training: load the latest model')
