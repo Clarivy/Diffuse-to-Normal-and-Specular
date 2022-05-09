@@ -72,7 +72,7 @@ def get_transform(opt, params, mode, method=transforms.InterpolationMode.BICUBIC
         elif mode == 'label':
             transform_list.append(transforms.Lambda(lambda img: __labelflip(img)))
     
-    if params['face_color']:
+    if params['face_color'] and mode == 'input':
         transform_list.append(transforms.Lambda(lambda img: __face_color_transfer(img, opt, params)))
 
     if params['resized_crop']:
@@ -87,7 +87,7 @@ def get_transform(opt, params, mode, method=transforms.InterpolationMode.BICUBIC
         transform_list += [transforms.Normalize((0.5, 0.5, 0.5),
                                                 (0.5, 0.5, 0.5))]
 
-    if params['illuminant_adjust']:
+    if params['illuminant_adjust'] and mode == 'input':
         transform_list.append(transforms.Lambda(lambda img: params['illuminant_adjust'] * img))
     
     return transforms.Compose(transform_list)
@@ -112,4 +112,4 @@ def __padding_crop(img, opt, params):
     return cv2.copyMakeBorder(img[x1:x2,y1:y2,:], top, bottom, left, right, borderType=cv2.BORDER_CONSTANT, value=(0,0,0))
 
 def __face_color_transfer(img, opt, params):
-    return face_color_transfer(opt.face_color[params['face_color']], img * 255) / 255
+    return (face_color_transfer(opt.face_color[params['face_color']], img * 255) / 255.).astype(np.float32)

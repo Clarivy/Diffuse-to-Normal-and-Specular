@@ -20,8 +20,8 @@ def is_image_file(filename):
     return any(filename.endswith(extension) for extension in IMG_EXTENSIONS)
 
 def is_required_file(fname, mode):
-    return  (mode == "input" and fname == "UV_diffuse_merged.png") or \
-            (mode == "label" and fname == "UV_specular_merged.png")
+    return  (mode == "input" and (("diffuse" in fname) or ("color" in fname))) or \
+            (mode == "label" and (("normal" in fname) or ("tangent" in fname)))
 
 
 def make_face_color(dir, opt):
@@ -46,11 +46,8 @@ def make_dataset(dir, mode):
     for root, _, fnames in sorted(os.walk(dir)):
         for fname in fnames:
             if is_image_file(fname) and is_required_file(fname, mode):
-                    if mode == 'label':
-                        images.append(root)
-                    elif mode == 'input': 
-                        path = os.path.join(root, fname)
-                        images.append(path)
+                path = os.path.join(root, fname)
+                images.append(path)
 
     return images
 

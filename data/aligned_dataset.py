@@ -22,6 +22,8 @@ class AlignedDataset(BaseDataset):
         if opt.isTrain or opt.use_encoded_image:
             self.dir_B = opt.dataroot
             self.B_paths = sorted(make_dataset(self.dir_B, mode = "label"))
+            if len(self.B_paths) != len(self.A_paths):
+                raise Exception("Number of input and label not match!")
         
         if opt.isTrain and opt.face_color_transfer:
             self.opt.face_color = make_face_color(opt.face_color_path, opt)
@@ -46,7 +48,7 @@ class AlignedDataset(BaseDataset):
     def __getitem__(self, index):        
         ### input A (label maps)
         A_path = self.A_paths[index]              
-        A = readImage(A_path, dtype=np.float32)
+        A = readImage(A_path, dtype=np.float32)[:,:,:3]
         params = get_params(self.opt)
         transform_A = get_transform(self.opt, params, mode = "input")
         A_tensor = transform_A(A)
@@ -54,22 +56,8 @@ class AlignedDataset(BaseDataset):
         B_tensor = inst_tensor = feat_tensor = 0
         ### input B (real images)
         if self.opt.isTrain or self.opt.use_encoded_image:
-            B_path = self.B_paths[index]   
-            path1 = os.path.join(B_path, "UV_specular_merged.png")
-            B1 = readImage(path1, dtype=np.float32)
-
-            path2 = os.path.join(B_path, "tangent.png")
-            if exists(path2):
-                B2 = readImage(path2, dtype=np.float32)
-            else:
-                path2 = os.path.join(B_path, "total_matrix_tangent.png")
-                if exists(path2):
-                    B2 = readImage(path2, dtype=np.float32)
-                else:
-                    print("No tangent image found!")
-                    exit(1)
-                
-            B = cv2.merge([B1, B2[:,:,0:2]])
+            B_path = self.B_paths[index]
+            B = readImage(B_path, dtype=np.float32)[:,:,:3]
             transform_B = get_transform(self.opt, params, mode = "label")
             B_tensor = transform_B(B)
             # transform_B = get_transform(self.opt, params)      

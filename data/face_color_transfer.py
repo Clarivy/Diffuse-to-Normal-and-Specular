@@ -36,7 +36,7 @@ def get_border(Sa):
     while t1 >= 0 and t2 <= 255:
         diff += (Sa[t1] - Sa[t2])
         if abs(diff) > 2 * max(Sa[t1], Sa[t2]) or Sa[t1] == 0 or Sa[t2] == 0:
-            print("Sa", Sa[t1], Sa[t2])
+            # print("Sa", Sa[t1], Sa[t2])
             return [t1, t2]
         t1 -= 1
         t2 += 1
@@ -188,7 +188,7 @@ def face_color_transfer(source, target):
         b4 = ~(b1 | b2 | b3)
         a[b1] = sab
         a[b2] = sae
-        print(np.sum(b1), np.sum(b2), np.sum(b3), np.sum(b4))
+        #print(np.sum(b1), np.sum(b2), np.sum(b3), np.sum(b4))
         #a[b4] = aold[b4]
         return a
 
