@@ -18,6 +18,8 @@
 
 ## Requirement
 
+- dominate
+
 - pillow
 
 - numpy
