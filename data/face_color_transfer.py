@@ -48,8 +48,8 @@ def get_border(Sa):
 def deal(rgb):
     y = RGB2YCbCr(rgb)
     b = (y[:, :, 1] >= 77) & (y[:, :, 1] <= 127) & (
-        y[:, :, 2] >= 133) & (y[:, :, 2] <= 173)
-    XYZ = colour.sRGB_to_XYZ(rgb, apply_cctf_decoding=False)
+        y[:, :, 2] >= 133) & (y[:, :, 2] <= 194)
+    XYZ = colour.sRGB_to_XYZ(rgb / 255, apply_cctf_decoding=False)
     LAB = colour.XYZ_to_Lab(XYZ)
     lab = np.round(LAB).astype(np.int64)
     # a, b += 128
@@ -71,8 +71,8 @@ def deal(rgb):
 def get_info(rgb):
     y = RGB2YCbCr(rgb)
     b = (y[:, :, 1] >= 77) & (y[:, :, 1] <= 127) & (
-        y[:, :, 2] >= 133) & (y[:, :, 2] <= 173)
-    XYZ = colour.sRGB_to_XYZ(rgb, apply_cctf_decoding=False)
+        y[:, :, 2] >= 133) & (y[:, :, 2] <= 194)
+    XYZ = colour.sRGB_to_XYZ(rgb / 255, apply_cctf_decoding=False)
     LAB = colour.XYZ_to_Lab(XYZ)
     lab = np.round(LAB).astype(np.int64)
     # a, b += 128
@@ -86,7 +86,7 @@ def get_info(rgb):
     return info
 
 def informed_deal(rgb, rgb_info):
-    XYZ = colour.sRGB_to_XYZ(rgb, apply_cctf_decoding=False)
+    XYZ = colour.sRGB_to_XYZ(rgb / 255, apply_cctf_decoding=False)
     LAB = colour.XYZ_to_Lab(XYZ)
     lab = np.round(LAB).astype(np.int64)
     # a, b += 128
@@ -152,7 +152,7 @@ def informed_face_color_transfer(source, source_info, target, target_info):
     tlab[:, :, 1:3] = np.clip(tlab[:, :, 1:3], -128, 128)
     # return Lab2RGB(tlab)
     XYZ = colour.Lab_to_XYZ(tlab)
-    RGB = colour.XYZ_to_sRGB(XYZ, apply_cctf_encoding=False)
+    RGB = colour.XYZ_to_sRGB(XYZ, apply_cctf_encoding=False) * 255
     return RGB
 
 
@@ -206,5 +206,5 @@ def face_color_transfer(source, target):
     tlab[:, :, 1:3] = np.clip(tlab[:, :, 1:3], -128, 128)
     # return Lab2RGB(tlab)
     XYZ = colour.Lab_to_XYZ(tlab)
-    RGB = colour.XYZ_to_sRGB(XYZ, apply_cctf_encoding=False)
+    RGB = colour.XYZ_to_sRGB(XYZ, apply_cctf_encoding=False) * 255
     return RGB
