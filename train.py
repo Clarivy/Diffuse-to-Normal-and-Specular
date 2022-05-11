@@ -101,6 +101,8 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         ### print out errors
         if total_steps % opt.print_freq == print_delta:
             errors = {k: v.data.item() if not isinstance(v, int) else v for k, v in loss_dict.items()}            
+            errors["val/lr_D"] = optimizer_D.param_groups[0]['lr']
+            errors["val/lr_G"] = optimizer_G.param_groups[0]['lr']
             t = (time.time() - iter_start_time) / opt.print_freq
             visualizer.print_current_errors(epoch, epoch_iter, errors, t)
             visualizer.plot_current_errors(errors, total_steps)
