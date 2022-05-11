@@ -156,6 +156,12 @@ def informed_face_color_transfer(source, source_info, target, target_info):
     return RGB
 
 
+def compressor(x):
+    if x < 0.8:
+        return x
+    else:
+        return 0.8 + 2.0 * np.arctan(x - 1) / np.pi
+
 def face_color_transfer(source, target):
     slab, sb, Sa, Sb, [sab, sae], [sbb, sbe], sam, sbm = deal(source)
     tlab, tb, Ta, Tb, [tab, tae], [tbb, tbe], tam, tbm = deal(target)
@@ -175,6 +181,40 @@ def face_color_transfer(source, target):
     rsa2 = (sae - sam) * 1.0 / (tae - tam)
     rsb1 = (sbm - sbb) * 1.0 / (tbm - tbb)
     rsb2 = (sbe - sbm) * 1.0 / (tbe - tbm)
+    # print("Trans Params", rsa1, rsa2, rsb1, rsb2)
+    rsa1 = compressor(rsa1)
+    rsa2 = compressor(rsa2)
+    rsb1 = compressor(rsb1)
+    rsb2 = compressor(rsb2)
+
+    # rmax = max(rsa1, max(rsa2, max(rsb1, rsb2)))
+    # if rmax > 0.6:
+    #     rmax = rmax * 0.6
+    #     rsa1 = rsa1 / rmax
+    #     rsa2 = rsa2 / rmax
+    #     rsb1 = rsb1 / rmax
+    #     rsb2 = rsb2 / rmax
+
+    # rsa1 = min(0.5, rsa1)
+    # rsa2 = min(0.5, rsa2)
+    # rsb1 = min(0.5, rsb1)
+    # rsb2 = min(0.5, rsb2)
+
+    # if (sae - tam) < 0:
+    #     rsa1 = max((255 - sam) / (sae - tam), rsa1)
+    #     rsa2 = max((255 - sam) / (sae - tam), rsa2)
+    # else:
+    #     rsa1 = min((255 - sam) / (sae - tam), rsa1)
+    #     rsa2 = min((255 - sam) / (sae - tam), rsa2)
+
+    # if (sbe - tbm) < 0:
+    #     rsb1 = max((255 - sbm) / (sbe - tbm), rsb1)
+    #     rsb2 = max((255 - sbm) / (sbe - tbm), rsb2)
+    # else:
+    #     rsb1 = min((255 - sbm) / (sbe - tbm), rsb1)
+    #     rsb2 = min((255 - sbm) / (sbe - tbm), rsb2)
+
+    # print("Justified Trans Params", rsa1, rsa2, rsb1, rsb2)
 
     def transfer(a, sam, tam, rsa1, rsa2, sab, sae):
         aold = a.copy()
