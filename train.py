@@ -1,3 +1,4 @@
+import copy
 import time
 import os
 import numpy as np
@@ -17,6 +18,7 @@ import util.util as util
 from util.visualizer import Visualizer
 
 opt = TrainOptions().parse()
+
 iter_path = os.path.join(opt.checkpoints_dir, opt.name, 'iter.txt')
 if opt.continue_train:
     try:
@@ -34,6 +36,12 @@ if opt.debug:
     opt.niter = 1
     opt.niter_decay = 0
     opt.max_dataset_size = 10
+
+validate_opt = copy.deepcopy(opt)
+validate_opt.dataroot = opt.validate_dataroot
+validate_dataloader = CreateDataLoader(validate_opt)
+validate_dataset = validate_dataloader.load_data()
+print('#validation images = %d' % len(validate_dataset))
 
 data_loader = CreateDataLoader(opt)
 dataset = data_loader.load_data()
@@ -111,8 +119,8 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         ### display output images
         if save_fake:
             visuals = OrderedDict([('input_label', util.tensor2label(data['label'][0], opt.label_nc)),
-                                   ('synthesized_image', util.tensor2im(generated.data[0])),
-                                   ('real_image', util.tensor2im(data['image'][0]))])
+                                   ('synthesized_image', util.tensor2im(generated.data[0], normalize = False)),
+                                   ('real_image', util.tensor2im(data['image'][0], normalize=False))])
             visualizer.display_current_results(visuals, epoch, total_steps)
 
         ### save latest model
@@ -120,10 +128,22 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
             print('saving the latest model (epoch %d, total_steps %d)' % (epoch, total_steps))
             model.module.save('latest')            
             np.savetxt(iter_path, (epoch, epoch_iter), delimiter=',', fmt='%d')
+        
+        ### validate current model
+        if total_steps % opt.validate_freq == 0:
+            mse_loss = 0
+            for data in validate_dataset:
+                mse_loss += model.module.validate(Variable(data['label']), Variable(data['inst']), 
+                    Variable(data['image']), Variable(data['feat']))
+            mse_loss /= len(validate_dataset)
+            print('Validation MSE: %.4f' % mse_loss)
+            valid_msg = {"val/mse": mse_loss}
+            visualizer.plot_current_validation(valid_msg, total_steps)
+            
 
         if epoch_iter >= dataset_size:
             break
-       
+
     # end of epoch 
     iter_end_time = time.time()
     print('End of epoch %d / %d \t Time Taken: %d sec' %
