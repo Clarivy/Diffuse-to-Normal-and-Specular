@@ -10,11 +10,13 @@
 
 - [x]  Divide testing and training data
 
-- [ ]  Normalize and denormalize
-
 - [x]  Skin tone adjust
 
-- [ ]  Remove specular
+- [x]  Remove specular
+
+- [ ]  Validate in routine
+
+- [ ]  Normalize and denormalize
 
 ## Requirement
 
