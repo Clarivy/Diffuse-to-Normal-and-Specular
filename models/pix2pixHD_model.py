@@ -216,6 +216,27 @@ class Pix2PixHDModel(BaseModel):
             fake_image = self.netG.forward(input_concat)
         return fake_image
 
+    def validate(self, label, inst, image, feat):
+        # Encode Inputs
+        input_label, inst_map, real_image, feat_map = self.encode_input(label, inst, image, feat)  
+
+        # Fake Generation
+        if self.use_features:
+            if not self.opt.load_features:
+                feat_map = self.netE.forward(real_image, inst_map)                     
+            input_concat = torch.cat((input_label, feat_map), dim=1)                        
+        else:
+            input_concat = input_label
+        fake_image = self.netG.forward(input_concat)
+                   
+        # VGG feature matching loss
+        loss_G_VGG = 0
+        if not self.opt.no_vgg_loss:
+            loss_G_VGG = self.criterionVGG(fake_image, real_image) * self.opt.lambda_feat
+        
+        # Only return the fake_B image if necessary to save BW
+        return loss_G_VGG
+
     def sample_features(self, inst): 
         # read precomputed feature clusters 
         cluster_path = os.path.join(self.opt.checkpoints_dir, self.opt.name, self.opt.cluster_path)        

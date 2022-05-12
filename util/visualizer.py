@@ -85,6 +85,13 @@ class Visualizer():
                     webpage.add_images(ims[num:], txts[num:], links[num:], width=self.win_size)
             webpage.save()
 
+    def plot_current_validation(self, errors, step):
+        if self.tf_log:
+            for tag, value in errors.items():
+                # summary = self.tf.Summary(value=[self.tf.Summary.Value(tag=tag, simple_value=value)])
+                # self.writer.add_summary(summary, step)
+                self.writer.add_scalar(tag, value, step)
+
     # errors: dictionary of error labels and values
     def plot_current_errors(self, errors, step):
         if self.tf_log:
