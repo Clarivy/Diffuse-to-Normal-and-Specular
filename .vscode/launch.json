@@ -30,15 +30,16 @@
             "args": [
                 "--gpu_ids", "0",
                 "--no_instance",
-                "--dataroot", "/data/zhaoqc/d2sn_data/train",
+                "--dataroot", "/data/zhaoqc/d2sn_data/train_trans",
                 "--label_nc", "0",
-                "--name", "normal",
+                "--name", "valid",
                 "--tf_log",
                 "--random_flip",
                 "--random_resized_crop",
-                "--fineSize", "1000",
+                "--fineSize", "870",
                 "--random_illuminant_adjust",
-                "--face_color_transfer"
+                "--face_color_transfer",
+                "--face_color_path", "/data/zhaoqc/d2sn_data/face_color"
             ]
         }
     ]

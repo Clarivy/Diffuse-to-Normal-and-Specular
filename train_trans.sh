@@ -1,1 +1,1 @@
-python train.py --gpu_ids 0 --no_instance --dataroot /data/zhaoqc/d2sn_data/train_trans --label_nc 0 --name no_transfer --tf_log --random_flip --random_resized_crop --fineSize 1000 --random_illuminant_adjust --continue_train
+python train.py --gpu_ids 0 --no_instance --dataroot /data/zhaoqc/d2sn_data/train_trans --label_nc 0 --name shake_more --tf_log --random_flip --random_resized_crop --fineSize 970 --random_illuminant_adjust --face_color_transfer --face_color_path /data/zhaoqc/d2sn_data/face_color --continue_train
