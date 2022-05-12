@@ -26,7 +26,7 @@ def get_params(opt):
     else:
         res['vflip'] = False
 
-    if opt.isTrain and opt.random_resized_crop and (np.random.random() > 0.8):
+    if opt.isTrain and opt.random_resized_crop and (np.random.random() < 0.8):
         lx = opt.fineSize + random.randint(0, np.maximum(0, new_w - opt.fineSize))
         ly = opt.fineSize + random.randint(0, np.maximum(0, new_h - opt.fineSize))
         sx = random.randint(0, np.maximum(0, new_w - lx))
@@ -83,7 +83,7 @@ def get_transform(opt, params, mode, method=transforms.InterpolationMode.BICUBIC
 
     transform_list += [transforms.ToTensor()]
 
-    if normalize:
+    if normalize and mode == 'input':
         transform_list += [transforms.Normalize((0.5, 0.5, 0.5),
                                                 (0.5, 0.5, 0.5))]
 

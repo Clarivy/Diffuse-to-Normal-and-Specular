@@ -206,9 +206,14 @@ class GlobalGenerator(nn.Module):
                        norm_layer(int(ngf * mult / 2)), activation]
         model += [nn.ReflectionPad2d(3), nn.Conv2d(ngf, output_nc, kernel_size=7, padding=0), nn.Tanh()]        
         self.model = nn.Sequential(*model)
+    
+    def regulation(self, output):
+        return output / (output ** 2).sum(axis=1) ** 0.5
             
     def forward(self, input):
-        return self.model(input)             
+        output = self.model(input)
+        return self.regulation(output)
+        # return output
         
 # Define a resnet block
 class ResnetBlock(nn.Module):
