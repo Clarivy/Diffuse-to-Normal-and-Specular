@@ -14,9 +14,11 @@
 
 - [x]  Remove specular
 
-- [ ]  Validate in routine
+- [x]  Validate in routine
 
 - [ ]  Normalize and denormalize
+
+- [ ]  Regulation output tangent
 
 ## Requirement
 
