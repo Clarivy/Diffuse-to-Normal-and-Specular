@@ -40,7 +40,7 @@ class TrainOptions(BaseOptions):
         self.parser.add_argument('--pool_size', type=int, default=0, help='the size of image buffer that stores previously generated images')
 
         # for validate
-        self.parser.add_argument('--validate_freq', type=int, default=1, help='frequency of validation')
+        self.parser.add_argument('--validate_freq', type=int, default=300, help='frequency of validation')
         self.parser.add_argument('--validate_dataroot', type=str, default='/data/zhaoqc/d2sn_data/validation', help='path to validation images')
 
         self.isTrain = True
