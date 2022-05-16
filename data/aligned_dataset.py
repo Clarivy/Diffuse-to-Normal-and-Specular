@@ -6,6 +6,7 @@ import numpy as np
 from os.path import exists
 import os
 import cv2
+import torch
 
 from utils import readImage
 
@@ -48,8 +49,10 @@ class AlignedDataset(BaseDataset):
     def __getitem__(self, index):        
         ### input A (label maps)
         A_path = self.A_paths[index]              
-        A = readImage(A_path, dtype=np.float32)[:,:,:3]
-        params = get_params(self.opt)
+        A = readImage(A_path, dtype=np.uint8)[:,:,:3]
+        A = cv2.resize(A, [self.opt.loadSize, self.opt.loadSize], interpolation=cv2.INTER_CUBIC)
+        params = get_params(self.opt, A)
+        A = (A / 255).astype(np.float32)
         transform_A = get_transform(self.opt, params, mode = "input")
         A_tensor = transform_A(A)
 
@@ -58,6 +61,8 @@ class AlignedDataset(BaseDataset):
         if self.opt.isTrain or self.opt.use_encoded_image:
             B_path = self.B_paths[index]
             B = readImage(B_path, dtype=np.float32)[:,:,:3]
+            B = cv2.resize(B, [self.opt.loadSize, self.opt.loadSize], interpolation=cv2.INTER_CUBIC)
+            B = (B.transpose(2,0,1) * params['mask'] + np.ones(params['osize'], dtype=np.float32) / 2 * (~params['mask'])).transpose(1, 2, 0)
             transform_B = get_transform(self.opt, params, mode = "label")
             B_tensor = transform_B(B)
             # transform_B = get_transform(self.opt, params)      
@@ -68,7 +73,7 @@ class AlignedDataset(BaseDataset):
             exit(1)
 
         input_dict = {'label': A_tensor, 'inst': inst_tensor, 'image': B_tensor, 
-                      'feat': feat_tensor, 'path': A_path}
+                      'feat': feat_tensor, 'path': A_path, 'mask': torch.tensor(params['mask'])}
 
         return input_dict
 

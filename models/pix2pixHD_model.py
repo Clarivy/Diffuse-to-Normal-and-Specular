@@ -149,7 +149,7 @@ class Pix2PixHDModel(BaseModel):
         else:
             return self.netD.forward(input_concat)
 
-    def forward(self, label, inst, image, feat, infer=False):
+    def forward(self, label, inst, image, feat, mask, infer=False):
         # Encode Inputs
         input_label, inst_map, real_image, feat_map = self.encode_input(label, inst, image, feat)  
 
@@ -160,7 +160,7 @@ class Pix2PixHDModel(BaseModel):
             input_concat = torch.cat((input_label, feat_map), dim=1)                        
         else:
             input_concat = input_label
-        fake_image = self.netG.forward(input_concat)
+        fake_image = self.netG.forward(input_concat) * mask
 
         # Fake Detection and Loss
         pred_fake_pool = self.discriminate(input_label, fake_image, use_pool=True)
@@ -192,7 +192,7 @@ class Pix2PixHDModel(BaseModel):
         # Only return the fake_B image if necessary to save BW
         return [ self.loss_filter( loss_G_GAN, loss_G_GAN_Feat, loss_G_VGG, loss_D_real, loss_D_fake ), None if not infer else fake_image ]
 
-    def inference(self, label, inst, image=None):
+    def inference(self, label, inst, mask, image=None):
         # Encode Inputs        
         image = Variable(image) if image is not None else None
         input_label, inst_map, real_image, _ = self.encode_input(Variable(label), Variable(inst), image, infer=True)
@@ -211,12 +211,12 @@ class Pix2PixHDModel(BaseModel):
            
         if torch.__version__.startswith('0.4'):
             with torch.no_grad():
-                fake_image = self.netG.forward(input_concat)
+                fake_image = self.netG.forward(input_concat) * mask
         else:
-            fake_image = self.netG.forward(input_concat)
+            fake_image = self.netG.forward(input_concat) * mask
         return fake_image
 
-    def validate(self, label, inst, image, feat):
+    def validate(self, label, inst, image, feat, mask):
         # Encode Inputs
         input_label, inst_map, real_image, feat_map = self.encode_input(label, inst, image, feat)  
 
@@ -229,7 +229,7 @@ class Pix2PixHDModel(BaseModel):
                 input_concat = torch.cat((input_label, feat_map), dim=1)                        
             else:
                 input_concat = input_label
-            fake_image = self.netG.forward(input_concat)
+            fake_image = self.netG.forward(input_concat) * mask
                     
             # VGG feature matching loss
             loss_G_VGG = self.criterionVGG(fake_image, real_image) * self.opt.lambda_feat

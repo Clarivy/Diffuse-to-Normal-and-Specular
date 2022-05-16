@@ -78,7 +78,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
 
         ############## Forward Pass ######################
         losses, generated = model(Variable(data['label']), Variable(data['inst']), 
-            Variable(data['image']), Variable(data['feat']), infer=save_fake)
+            Variable(data['image']), Variable(data['feat']), Variable(data['mask']), infer=save_fake)
 
         # sum per device losses
         losses = [ torch.mean(x) if not isinstance(x, int) else x for x in losses ]
@@ -134,7 +134,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
             mse_loss = 0
             for data in validate_dataset:
                 mse_loss += model.module.validate(Variable(data['label']), Variable(data['inst']), 
-                    Variable(data['image']), Variable(data['feat']))
+                    Variable(data['image']), Variable(data['feat'], Variable(data['mask'])))
             mse_loss /= len(validate_dataset)
             print('Validation MSE: %.4f' % mse_loss)
             valid_msg = {"val/mse": mse_loss}

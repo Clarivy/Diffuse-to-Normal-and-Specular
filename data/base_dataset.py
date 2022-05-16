@@ -1,3 +1,4 @@
+from torch import norm
 import torch.utils.data as data
 from PIL import Image
 import torchvision.transforms as transforms
@@ -16,7 +17,7 @@ class BaseDataset(data.Dataset):
     def initialize(self, opt):
         pass
 
-def get_params(opt):
+def get_params(opt, target_image):
     new_h = new_w = opt.loadSize            
 
     res = {}
@@ -25,6 +26,8 @@ def get_params(opt):
         res['vflip'] = True
     else:
         res['vflip'] = False
+
+    res['mask'] = (target_image[:,:,0] != 0) | (target_image[:,:,1] != 0) | (target_image[:,:,2] != 0)
 
     if opt.isTrain and opt.random_resized_crop and (np.random.random() < 0.8):
         lx = opt.fineSize + random.randint(0, np.maximum(0, new_w - opt.fineSize))
@@ -86,6 +89,8 @@ def get_transform(opt, params, mode, method=transforms.InterpolationMode.BICUBIC
     if normalize and mode == 'input':
         transform_list += [transforms.Normalize((0.5, 0.5, 0.5),
                                                 (0.5, 0.5, 0.5))]
+    if mode == 'label':
+        transform_list += [transforms.Lambda(lambda img: __vectorilize(img))]
 
     if params['illuminant_adjust'] and mode == 'input':
         transform_list.append(transforms.Lambda(lambda img: params['illuminant_adjust'] * img))
@@ -113,3 +118,6 @@ def __padding_crop(img, opt, params):
 
 def __face_color_transfer(img, opt, params):
     return (face_color_transfer(opt.face_color[params['face_color']], img * 255) / 255.).astype(np.float32)
+
+def __vectorilize(img):
+    return (img - 0.5) * 2
