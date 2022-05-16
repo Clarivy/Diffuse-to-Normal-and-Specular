@@ -134,7 +134,7 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
             mse_loss = 0
             for data in validate_dataset:
                 mse_loss += model.module.validate(Variable(data['label']), Variable(data['inst']), 
-                    Variable(data['image']), Variable(data['feat'], Variable(data['mask'])))
+                    Variable(data['image']), Variable(data['feat']), Variable(data['mask']))
             mse_loss /= len(validate_dataset)
             print('Validation MSE: %.4f' % mse_loss)
             valid_msg = {"val/mse": mse_loss}
