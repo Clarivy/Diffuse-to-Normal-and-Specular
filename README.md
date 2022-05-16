@@ -16,9 +16,11 @@
 
 - [x]  Validate in routine
 
-- [ ]  Normalize and denormalize
+- [x]  Normalize and denormalize
 
-- [ ]  Regulation output tangent
+- [x]  Regulation output tangent
+
+- [ ]  Add cosine embedding loss
 
 ## Requirement
 
