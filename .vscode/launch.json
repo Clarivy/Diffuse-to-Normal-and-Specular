@@ -14,17 +14,16 @@
             "args": [
                 "--gpu_ids", "0",
                 "--no_instance",
-                "--dataroot", "/data/new_disk/pangbai/d2sn_data/test",
+                "--dataroot", "/data/zhaoqc/d2sn_data/unlabeled",
                 "--label_nc", "0",
-                "--name", "d2sn",
-                "--fp16",
+                "--name", "shake_more",
             ]
         },
         {
             "name": "Python: train",
             "type": "python",
             "request": "launch",
-            "program": "${file}",
+            "program": "./train.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
@@ -32,11 +31,12 @@
                 "--no_instance",
                 "--dataroot", "/data/zhaoqc/d2sn_data/train_trans",
                 "--label_nc", "0",
-                "--name", "valid",
+                "--name", "test",
                 "--tf_log",
+                "--niter_decay", "200",
                 "--random_flip",
                 "--random_resized_crop",
-                "--fineSize", "870",
+                "--fineSize", "970",
                 "--random_illuminant_adjust",
                 "--face_color_transfer",
                 "--face_color_path", "/data/zhaoqc/d2sn_data/face_color"

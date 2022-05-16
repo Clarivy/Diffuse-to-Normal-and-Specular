@@ -208,7 +208,7 @@ class GlobalGenerator(nn.Module):
         self.model = nn.Sequential(*model)
     
     def regulation(self, output):
-        return output / (output ** 2).sum(axis=1) ** 0.5
+        return output / ((output ** 2).sum(axis=1) ** 0.5)
             
     def forward(self, input):
         output = self.model(input)
