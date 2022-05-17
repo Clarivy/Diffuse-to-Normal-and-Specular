@@ -198,12 +198,13 @@ class Pix2PixHDModel(BaseModel):
         # Only return the fake_B image if necessary to save BW
         return [ self.loss_filter( loss_G_GAN, loss_G_GAN_Feat, loss_G_VGG, loss_D_real, loss_D_fake ), None if not infer else fake_image ]
 
-    def inference(self, label, inst, mask, image=None):
+    def inference(self, label, inst, mask = None, image=None):
         # Encode Inputs        
         image = Variable(image) if image is not None else None
-        input_label, inst_map, real_image, _, mask = self.encode_input(Variable(label), Variable(inst), image, mask=mask,infer=True)
-        input_label = input_label * mask
-        real_image = real_image * mask
+        input_label, inst_map, real_image, _, mask = self.encode_input(Variable(label), Variable(inst), image, mask=Variable(mask),infer=True)
+        if mask is not None:
+            input_label = input_label * mask
+            real_image = real_image * mask
 
         # Fake Generation
         if self.use_features:
@@ -217,11 +218,10 @@ class Pix2PixHDModel(BaseModel):
         else:
             input_concat = input_label        
            
-        if torch.__version__.startswith('0.4'):
-            with torch.no_grad():
-                fake_image = self.netG.forward(input_concat) * mask
-        else:
-            fake_image = self.netG.forward(input_concat) * mask
+        with torch.no_grad():
+            fake_image = self.netG.forward(input_concat)
+            if mask is not None:
+                fake_image = fake_image * mask
         return fake_image
 
     def validate(self, label, inst, image, feat, mask):
