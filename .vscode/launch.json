@@ -36,7 +36,7 @@
                 "--niter_decay", "200",
                 "--random_flip",
                 "--random_resized_crop",
-                "--fineSize", "970",
+                "--fineSize", "570",
                 "--random_illuminant_adjust",
                 "--face_color_transfer",
                 "--face_color_path", "/data/zhaoqc/d2sn_data/face_color"
