@@ -1,4 +1,3 @@
-from torch import norm
 import torch.utils.data as data
 from PIL import Image
 import torchvision.transforms as transforms
@@ -28,6 +27,7 @@ def get_params(opt, target_image):
         res['vflip'] = False
 
     res['mask'] = (target_image[:,:,0] != 0) | (target_image[:,:,1] != 0) | (target_image[:,:,2] != 0)
+    res['mask'] = res['mask'].astype(np.float32)
 
     if opt.isTrain and opt.random_resized_crop and (np.random.random() < 0.8):
         lx = opt.fineSize + random.randint(0, np.maximum(0, new_w - opt.fineSize))
@@ -79,10 +79,18 @@ def get_transform(opt, params, mode, method=transforms.InterpolationMode.BICUBIC
         transform_list.append(transforms.Lambda(lambda img: __face_color_transfer(img, opt, params)))
 
     if params['resized_crop']:
-        transform_list.append(transforms.Lambda(lambda img: __resized_crop(img, opt, params)))
+        transform_list.append(transforms.Lambda(lambda img: __resized_crop(img, opt, params, method=cv2.INTER_CUBIC)))
+        if mode == 'input':
+            params['mask'] = __resized_crop(params['mask'][:,:,np.newaxis], opt, params, method=cv2.INTER_NEAREST)
 
     if params['padding_crop']:
         transform_list.append(transforms.Lambda(lambda img: __padding_crop(img, opt, params)))
+        if mode == 'input':
+            params['mask'] = __padding_crop(params['mask'][:,:,np.newaxis], opt, params)
+    
+    # Mask label
+    # if mode == 'label':
+    #     transform_list.append(transforms.Lambda(lambda img: __mask_image(img, params)))
 
     transform_list += [transforms.ToTensor()]
 
@@ -108,9 +116,9 @@ def __labelflip(img):
     img[:,:,1] = 1 - img[:,:,1]
     return img
 
-def __resized_crop(img, opt, params):
+def __resized_crop(img, opt, params, method=cv2.INTER_CUBIC):
     x1, y1, x2, y2 = params['resized_crop']
-    return cv2.resize(img[x1:x2,y1:y2,:], params['osize'], interpolation=cv2.INTER_CUBIC)
+    return cv2.resize(img[x1:x2,y1:y2,:], params['osize'], interpolation=method)
 
 def __padding_crop(img, opt, params):
     x1, y1, x2, y2, top, bottom, left, right = params['padding_crop']
@@ -121,3 +129,9 @@ def __face_color_transfer(img, opt, params):
 
 def __vectorilize(img):
     return (img - 0.5) * 2
+
+def __mask_image(img, params):
+    unmasked = img * params['mask'][:,:,np.newaxis]
+    masked = np.ones(params['osize'], dtype=np.float32) / 2 * (1 - params['mask'])
+    result = unmasked + masked[:,:,np.newaxis]
+    return result

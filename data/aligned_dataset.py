@@ -62,7 +62,6 @@ class AlignedDataset(BaseDataset):
             B_path = self.B_paths[index]
             B = readImage(B_path, dtype=np.float32)[:,:,:3]
             B = cv2.resize(B, [self.opt.loadSize, self.opt.loadSize], interpolation=cv2.INTER_CUBIC)
-            B = (B.transpose(2,0,1) * params['mask'] + np.ones(params['osize'], dtype=np.float32) / 2 * (~params['mask'])).transpose(1, 2, 0)
             transform_B = get_transform(self.opt, params, mode = "label")
             B_tensor = transform_B(B)
             # transform_B = get_transform(self.opt, params)      
