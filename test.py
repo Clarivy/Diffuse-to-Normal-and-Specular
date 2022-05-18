@@ -59,7 +59,8 @@ for i, data in enumerate(dataset):
         generated = model.inference(data['label'], data['inst'], mask = data['mask'], image = data['image'])
         
     visuals = OrderedDict([('input_label', util.tensor2label(data['label'][0], opt.label_nc)),
-                           ('synthesized_image', util.tensor2im(generated.data[0], normalize=False))])
+                           ('synthesized_image', util.tensor2im(generated.data[0], normalize=False)),
+                           ('mask_image', util.tensor2im(data['mask'][0], normalize=False, is_mask=True)),])
     img_path = data['path']
     print('process image... %s' % img_path)
     visualizer.save_images(webpage, visuals, img_path, i)
