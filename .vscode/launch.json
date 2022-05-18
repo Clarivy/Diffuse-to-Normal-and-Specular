@@ -8,7 +8,7 @@
             "name": "Python: test",
             "type": "python",
             "request": "launch",
-            "program": "${file}",
+            "program": "./test.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
@@ -16,7 +16,7 @@
                 "--no_instance",
                 "--dataroot", "/data/zhaoqc/d2sn_data/unlabeled",
                 "--label_nc", "0",
-                "--name", "shake_more",
+                "--name", "mask_corrected",
             ]
         },
         {
@@ -39,7 +39,8 @@
                 "--fineSize", "570",
                 "--random_illuminant_adjust",
                 "--face_color_transfer",
-                "--face_color_path", "/data/zhaoqc/d2sn_data/face_color"
+                "--face_color_path", "/data/zhaoqc/d2sn_data/face_color",
+                "--nThreads", "8"
             ]
         }
     ]
