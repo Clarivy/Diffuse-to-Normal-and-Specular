@@ -44,6 +44,8 @@ class Visualizer():
                 #     s = BytesIO()
                 # scipy.misc.toimage(image_numpy).save(s, format="jpeg")
                 # Write image to tensorboard
+                if len(image_numpy.shape) == 2:
+                    image_numpy = image_numpy[:,:,np.newaxis]
                 self.writer.add_image(label, image_numpy, step, dataformats = 'HWC')
 
 
