@@ -54,7 +54,7 @@ def get_params(opt, target_image):
         res['padding_crop'] = False
     
     if opt.isTrain and opt.random_illuminant_adjust and (np.random.random() > 0.5):
-        res['illuminant_adjust'] = np.random.uniform(1 - 0.03, 1 + 0.03)
+        res['illuminant_adjust'] = np.random.uniform(1 - 0.10, 1 + 0.10)
     else:
         res['illuminant_adjust'] = False
 
