@@ -34,6 +34,7 @@ class TrainOptions(BaseOptions):
         self.parser.add_argument('--n_layers_D', type=int, default=3, help='only used if which_model_netD==n_layers')
         self.parser.add_argument('--ndf', type=int, default=64, help='# of discrim filters in first conv layer')    
         self.parser.add_argument('--lambda_feat', type=float, default=10.0, help='weight for feature matching loss')                
+        self.parser.add_argument('--lambda_normal', type=float, default=10.0, help='weight for feature matching loss')                
         self.parser.add_argument('--no_ganFeat_loss', action='store_true', help='if specified, do *not* use discriminator feature matching loss')
         self.parser.add_argument('--no_vgg_loss', action='store_true', help='if specified, do *not* use VGG feature matching loss')        
         self.parser.add_argument('--no_lsgan', action='store_true', help='do *not* use least square GAN, if false, use vanilla GAN')
