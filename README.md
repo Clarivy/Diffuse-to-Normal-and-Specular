@@ -20,7 +20,11 @@
 
 - [x]  Regulation output tangent
 
-- [ ]  Add cosine embedding loss
+- [x]  More random resize crop
+
+- [x]  Add vector similarity loss
+
+- [ ]  Training from higher to lower resolution
 
 ## Requirement
 
