@@ -412,10 +412,12 @@ class Vgg19(torch.nn.Module):
                 param.requires_grad = False
 
     def forward(self, X):
+        if X.shape[1] == 1:
+            X = torch.cat((X, X, X), dim = 1)
         h_relu1 = self.slice1(X)
         h_relu2 = self.slice2(h_relu1)        
         h_relu3 = self.slice3(h_relu2)        
         h_relu4 = self.slice4(h_relu3)        
-        h_relu5 = self.slice5(h_relu4)                
+        h_relu5 = self.slice5(h_relu4)
         out = [h_relu1, h_relu2, h_relu3, h_relu4, h_relu5]
         return out

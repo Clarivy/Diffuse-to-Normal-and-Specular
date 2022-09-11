@@ -21,8 +21,8 @@ def is_image_file(filename):
 
 def is_required_file(fname, mode):
     return  (mode == "input" and (("diffuse" in fname) or ("color" in fname))) or \
-            (mode == "label" and (("normal" in fname) or ("tangent" in fname)))
-
+            (mode == "normal" and (("normal" in fname) or ("tangent" in fname))) or \
+            (mode == "specular" and ("specular" in fname ))
 
 def make_face_color(dir, opt):
     images = []
@@ -30,10 +30,10 @@ def make_face_color(dir, opt):
 
     for root, _, fnames in sorted(os.walk(dir)):
         for fname in fnames:
-            if is_image_file(fname) and is_required_file(fname, "input"):
+            if is_image_file(fname):
                 path = os.path.join(root, fname)
                 image = readImage(path, dtype=np.uint8)[:,:,:3]
-                image = cv2.resize(image, [1024, 1024], interpolation=cv2.INTER_CUBIC)
+                image = cv2.resize(image, (1024, 1024), interpolation=cv2.INTER_CUBIC)
                 images.append(image)
 
     return images

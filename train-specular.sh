@@ -1,9 +1,10 @@
 python train.py \
- --gpu_ids 0 \
+ --gpu_ids 1 \
  --no_instance\
- --dataroot /data/new_disk/new_disk/pangbai/d2sn_data/train \
+ --dataroot /data/new_disk/new_disk/pangbai/d2sn_data/train/specular-data \
  --label_nc 0 \
- --name test \
+ --output_nc 1\
+ --name specular-test2 \
  --tf_log \
  --random_flip \
  --fineSize 920 \
@@ -14,5 +15,6 @@ python train.py \
  --validate_freq 900 \
  --niter 150  \
  --niter_decay 150 \
- --train_mode normal \
+ --train_mode specular \
+ --no_cosine_loss \
  --validate_dataroot /data/new_disk/new_disk/pangbai/d2sn_data/test/labeled

@@ -66,13 +66,13 @@ def get_params(opt, target_image):
     
     return res
 
-def get_transform(opt, params, mode, method=transforms.InterpolationMode.BICUBIC, normalize=True):
+def get_transform(opt, params, mode, normalize=True):
     transform_list = [transforms.Lambda(lambda img: cv2.resize(img, params['osize'], interpolation=cv2.INTER_CUBIC))]
 
     if params['vflip']:
-        if mode == 'input':
+        if mode == 'input' or mode == 'specular':
             transform_list.append(transforms.Lambda(lambda img: __flip(img)))
-        elif mode == 'label':
+        elif mode == 'normal':
             transform_list.append(transforms.Lambda(lambda img: __labelflip(img)))
     
     if params['face_color'] and mode == 'input':
@@ -97,7 +97,7 @@ def get_transform(opt, params, mode, method=transforms.InterpolationMode.BICUBIC
     if normalize and mode == 'input':
         transform_list += [transforms.Normalize((0.5, 0.5, 0.5),
                                                 (0.5, 0.5, 0.5))]
-    if mode == 'label':
+    if mode == 'normal' or mode == 'specular':
         transform_list += [transforms.Lambda(lambda img: __vectorilize(img))]
 
     if params['illuminant_adjust'] and mode == 'input':
@@ -118,11 +118,11 @@ def __labelflip(img):
 
 def __resized_crop(img, opt, params, method=cv2.INTER_CUBIC):
     x1, y1, x2, y2 = params['resized_crop']
-    return cv2.resize(img[x1:x2,y1:y2,:], params['osize'], interpolation=method)
+    return cv2.resize(img[x1:x2,y1:y2], params['osize'], interpolation=method)
 
 def __padding_crop(img, opt, params):
     x1, y1, x2, y2, top, bottom, left, right = params['padding_crop']
-    return cv2.copyMakeBorder(img[x1:x2,y1:y2,:], top, bottom, left, right, borderType=cv2.BORDER_CONSTANT, value=(0,0,0))
+    return cv2.copyMakeBorder(img[x1:x2,y1:y2], top, bottom, left, right, borderType=cv2.BORDER_CONSTANT)
 
 def __face_color_transfer(img, opt, params):
     return (face_color_transfer(opt.face_color[params['face_color']], img * 255) / 255.).astype(np.float32)

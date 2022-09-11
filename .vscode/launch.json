@@ -29,18 +29,47 @@
             "args": [
                 "--gpu_ids", "0",
                 "--no_instance",
-                "--dataroot", "/data/zhaoqc/d2sn_data/train_trans",
+                "--dataroot", "/data/new_disk/new_disk/pangbai/d2sn_data/train",
                 "--label_nc", "0",
                 "--name", "test",
                 "--tf_log",
                 "--niter_decay", "200",
                 "--random_flip",
                 "--random_resized_crop",
-                "--fineSize", "570",
+                "--fineSize", "920",
                 "--random_illuminant_adjust",
                 "--face_color_transfer",
-                "--face_color_path", "/data/zhaoqc/d2sn_data/face_color",
-                "--nThreads", "8"
+                "--face_color_path", "/data/new_disk/new_disk/pangbai/d2sn_data/face_color",
+                "--nThreads", "8",
+                "--validate_dataroot", "/data/new_disk/new_disk/pangbai/d2sn_data/test/labeled",
+                "--train_mode", "normal"
+            ]
+        },
+        {
+            "name": "Python: specular-train",
+            "type": "python",
+            "request": "launch",
+            "program": "./train.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--gpu_ids", "1",
+                "--no_instance",
+                "--dataroot", "/data/new_disk/new_disk/pangbai/d2sn_data/train/specular-data",
+                "--label_nc", "0",
+                "--output_nc", "1",
+                "--name", "test",
+                "--tf_log",
+                "--niter_decay", "200",
+                "--random_flip",
+                "--random_resized_crop",
+                "--fineSize", "920",
+                "--random_illuminant_adjust",
+                "--face_color_transfer",
+                "--face_color_path", "/data/new_disk/new_disk/pangbai/d2sn_data/face_color",
+                "--nThreads", "8",
+                "--validate_dataroot", "/data/new_disk/new_disk/pangbai/d2sn_data/test/labeled",
+                "--train_mode", "specular"
             ]
         }
     ]

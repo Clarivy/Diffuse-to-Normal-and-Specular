@@ -37,11 +37,12 @@ class TrainOptions(BaseOptions):
         self.parser.add_argument('--lambda_normal', type=float, default=10.0, help='weight for feature matching loss')                
         self.parser.add_argument('--no_ganFeat_loss', action='store_true', help='if specified, do *not* use discriminator feature matching loss')
         self.parser.add_argument('--no_vgg_loss', action='store_true', help='if specified, do *not* use VGG feature matching loss')        
+        self.parser.add_argument('--no_cosine_loss', action='store_true', help='if specified, do *not* use cosine similarity loss')        
         self.parser.add_argument('--no_lsgan', action='store_true', help='do *not* use least square GAN, if false, use vanilla GAN')
         self.parser.add_argument('--pool_size', type=int, default=0, help='the size of image buffer that stores previously generated images')
 
         # for validate
         self.parser.add_argument('--validate_freq', type=int, default=300, help='frequency of validation')
-        self.parser.add_argument('--validate_dataroot', type=str, default='/data/zhaoqc/d2sn_data/validation', help='path to validation images')
+        self.parser.add_argument('--validate_dataroot', type=str, required=True, help='path to validation images')
 
         self.isTrain = True

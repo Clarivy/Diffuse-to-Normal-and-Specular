@@ -22,7 +22,7 @@ class AlignedDataset(BaseDataset):
         ### input B (real images)
         if opt.isTrain or opt.use_encoded_image:
             self.dir_B = opt.dataroot
-            self.B_paths = sorted(make_dataset(self.dir_B, mode = "label"))
+            self.B_paths = sorted(make_dataset(self.dir_B, mode = opt.train_mode))
             if len(self.B_paths) != len(self.A_paths):
                 raise Exception("Number of input and label not match!")
         
@@ -50,7 +50,7 @@ class AlignedDataset(BaseDataset):
         ### input A (label maps)
         A_path = self.A_paths[index]              
         A = readImage(A_path, dtype=np.uint8)[:,:,:3]
-        A = cv2.resize(A, [self.opt.loadSize, self.opt.loadSize], interpolation=cv2.INTER_CUBIC)
+        A = cv2.resize(A, (self.opt.loadSize, self.opt.loadSize), interpolation=cv2.INTER_CUBIC)
         params = get_params(self.opt, A)
         A = (A / 255).astype(np.float32)
         transform_A = get_transform(self.opt, params, mode = "input")
@@ -60,9 +60,16 @@ class AlignedDataset(BaseDataset):
         ### input B (real images)
         if self.opt.isTrain or self.opt.use_encoded_image:
             B_path = self.B_paths[index]
-            B = readImage(B_path, dtype=np.float32)[:,:,:3]
-            B = cv2.resize(B, [self.opt.loadSize, self.opt.loadSize], interpolation=cv2.INTER_CUBIC)
-            transform_B = get_transform(self.opt, params, mode = "label")
+            if self.opt.train_mode == "specular":
+                B = readImage(B_path, dtype=np.float32)
+                if len(B.shape) == 3:
+                    B = B[:,:,0]
+            elif self.opt.train_mode == "normal":
+                B = readImage(B_path, dtype=np.float32)[:,:,:3]
+            else:
+                raise Exception("Error: unknown train mode")
+            B = cv2.resize(B, (self.opt.loadSize, self.opt.loadSize), interpolation=cv2.INTER_CUBIC)
+            transform_B = get_transform(self.opt, params, mode = self.opt.train_mode)
             B_tensor = transform_B(B)
             # transform_B = get_transform(self.opt, params)      
 

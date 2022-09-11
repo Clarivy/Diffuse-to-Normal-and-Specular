@@ -194,7 +194,9 @@ class Pix2PixHDModel(BaseModel):
         loss_G_VGG = 0
         if not self.opt.no_vgg_loss:
             loss_G_VGG = self.criterionVGG(fake_image, real_image)
-        loss_G_normal = 1 - self.criterionNormal(fake_image, real_image).mean()
+        loss_G_normal = 0
+        if not self.opt.no_cosine_loss:
+            loss_G_normal = 1 - self.criterionNormal(fake_image, real_image).mean()
 	# what is loss_filter?
         loss_G_VGG = loss_G_VGG * self.opt.lambda_feat + loss_G_normal * self.opt.lambda_normal
         # Only return the fake_B image if necessary to save BW
